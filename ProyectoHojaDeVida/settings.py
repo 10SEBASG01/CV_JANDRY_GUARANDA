@@ -10,6 +10,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-ww9j7_=ac%06&-rvo27ci
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 # Render Hostnames
+# Cambia esto temporalmente para descartar errores de host
 ALLOWED_HOSTS = ['*']
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
@@ -109,3 +110,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Permite cargar PDFs en iframes (Vital para tu visor)
 X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+# Esto evita el error si la variable no está en Render
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-valor-por-defecto-para-que-no-de-error-500')
