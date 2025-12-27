@@ -132,6 +132,9 @@ class VentaGarage(models.Model):
     descripcion = models.CharField(max_length=100)
     valordelbien = models.DecimalField(max_digits=5, decimal_places=2)
     activarparaqueseveaenfront = models.BooleanField(default=True)
+    documento_interes = models.FileField(upload_to='garage/documentos/', null=True, blank=True,
+    verbose_name="Documento Adicional (PDF/Foto)"
+    )
 
     def __str__(self):
         return f"{self.nombreproducto} - ${self.valordelbien}"
