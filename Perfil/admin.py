@@ -7,10 +7,15 @@ from .models import (
 @admin.register(DatosPersonales)
 class DatosPersonalesAdmin(admin.ModelAdmin):
     list_display = ('nombres', 'apellidos', 'numerocedula', 'email_contacto')
-    fields = ('idperfil', 'fotoperfil', 'nombres', 'apellidos', 'email_contacto', 'descripcionperfil', 
-              'numerocedula', 'nacionalidad', 'fechanacimiento', 'sexo', 'estadocivil', 
-              'direcciondomiciliaria', 'sitioweb', 'perfilactivo')
-
+    fields = (
+        'idperfil', 'fotoperfil', 'archivocv', 
+        'nombres', 'apellidos', 'descripcionperfil', 
+        'email_contacto', 'telefonofijo', 'telefonoconvencional',
+        'numerocedula', 'nacionalidad', 'fechanacimiento', 'lugarnacimiento',
+        'sexo', 'estadocivil', 'licenciaconducir',
+        'direcciondomiciliaria', 'direcciontrabajo', 'sitioweb', 'perfilactivo'
+    )
+    
 @admin.register(ExperienciaLaboral)
 class ExperienciaLaboralAdmin(admin.ModelAdmin):
     list_display = ('cargodesempenado', 'nombrempresa', 'fechainiciogestion', 'activarparaqueseveaenfront')

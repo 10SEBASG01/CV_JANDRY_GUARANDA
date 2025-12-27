@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Inicio{% endblock %}
+{% block title %}Inicio | {{ perfil.nombres }} {{ perfil.apellidos }}{% endblock %}
 
 {% block content %}
 <style>
@@ -78,20 +78,30 @@
                         <i class="bi bi-envelope-at-fill"></i> <span class="info-label">Email:</span> {{ perfil.email_contacto }}
                     </div>
                     <div class="col-md-6 small">
-                        <i class="bi bi-phone-fill"></i> <span class="info-label">Telf:</span> {{ perfil.telefonofijo|default:perfil.telefonoconvencional }}
+                        <i class="bi bi-telephone-fill"></i> <span class="info-label">Telf. Fijo:</span> {{ perfil.telefonofijo|default:"N/A" }}
+                    </div>
+                    
+                    <div class="col-md-6 small">
+                        <i class="bi bi-phone-fill"></i> <span class="info-label">Convencional:</span> {{ perfil.telefonoconvencional|default:"N/A" }}
                     </div>
                     <div class="col-md-6 small">
                         <i class="bi bi-geo-alt-fill"></i> <span class="info-label">Ubicación:</span> {{ perfil.direcciondomiciliaria }}
                     </div>
+
                     <div class="col-md-6 small">
                         <i class="bi bi-card-text"></i> <span class="info-label">Cédula:</span> {{ perfil.numerocedula }}
                     </div>
+                    <div class="col-md-6 small">
+                        <i class="bi bi-car-front-fill"></i> <span class="info-label">Licencia:</span> {{ perfil.licenciaconducir|default:"No posee" }}
+                    </div>
+
                     <div class="col-md-6 small">
                         <i class="bi bi-flag-fill"></i> <span class="info-label">Nacionalidad:</span> {{ perfil.nacionalidad }}
                     </div>
                     <div class="col-md-6 small">
                         <i class="bi bi-calendar-event-fill"></i> <span class="info-label">F. Nacimiento:</span> {{ perfil.fechanacimiento }}
                     </div>
+
                     <div class="col-md-6 small">
                         <i class="bi bi-heart-fill"></i> <span class="info-label">Estado Civil:</span> {{ perfil.estadocivil }}
                     </div>
@@ -105,11 +115,11 @@
 
             <div class="col-lg-3 text-center">
                 {% if perfil.archivocv %}
-                    <a href="{{ perfil.archivocv.url }}" class="btn btn-primary btn-cv shadow-sm mt-4 mt-lg-0" download>
-                        <i class="bi bi-download me-2"></i>Descargar CV
+                    <a href="{{ perfil.archivocv.url }}" class="btn btn-primary btn-cv shadow-sm mt-4 mt-lg-0" target="_blank">
+                        <i class="bi bi-file-earmark-pdf-fill me-2"></i>Ver / Descargar CV
                     </a>
                 {% else %}
-                    <button class="btn btn-secondary btn-cv shadow-sm mt-4 mt-lg-0" disabled title="Sube tu CV en el panel de admin">
+                    <button class="btn btn-secondary btn-cv shadow-sm mt-4 mt-lg-0" disabled>
                         <i class="bi bi-slash-circle me-2"></i>CV No Disponible
                     </button>
                 {% endif %}
@@ -117,9 +127,8 @@
         {% else %}
             <div class="col-12 text-center py-5">
                 <i class="bi bi-person-bounding-box display-1 text-muted"></i>
-                <h2 class="mt-3">Información de Perfil no encontrada</h2>
-                <p>Ve al panel de administración para registrar tus datos personales.</p>
-                <a href="/admin" class="btn btn-primary">Ir al Admin</a>
+                <h2 class="mt-3">Perfil no configurado</h2>
+                <a href="/admin" class="btn btn-primary">Configurar en Admin</a>
             </div>
         {% endif %}
     </div>
@@ -138,7 +147,7 @@
                             <span><strong>{{ exp.cargodesempenado }}</strong><br><small class="text-muted">{{ exp.nombrempresa }}</small></span>
                         </li>
                     {% empty %}
-                        <li class="small text-muted italic">No hay datos recientes.</li>
+                        <li class="small text-muted">No hay datos.</li>
                     {% endfor %}
                 </ul>
                 <a href="{% url 'experiencia' %}" class="btn btn-sm btn-outline-primary mt-2">Ver más</a>
@@ -158,7 +167,7 @@
                             <span>{{ curso.nombrecurso }}</span>
                         </li>
                     {% empty %}
-                        <li class="small text-muted italic">No hay datos recientes.</li>
+                        <li class="small text-muted">No hay datos.</li>
                     {% endfor %}
                 </ul>
                 <a href="{% url 'cursos' %}" class="btn btn-sm btn-outline-primary mt-2">Ver más</a>
@@ -178,7 +187,7 @@
                             <span>{{ rec.descripcionreconocimiento }}</span>
                         </li>
                     {% empty %}
-                        <li class="small text-muted italic">No hay datos recientes.</li>
+                        <li class="small text-muted">No hay datos.</li>
                     {% endfor %}
                 </ul>
                 <a href="{% url 'reconocimientos' %}" class="btn btn-sm btn-outline-primary mt-2">Ver más</a>
@@ -198,7 +207,7 @@
                             <span>{{ acad.nombrerecurso }}</span>
                         </li>
                     {% empty %}
-                        <li class="small text-muted italic">No hay datos recientes.</li>
+                        <li class="small text-muted">No hay datos.</li>
                     {% endfor %}
                 </ul>
                 <a href="{% url 'productos_academicos' %}" class="btn btn-sm btn-outline-primary mt-2">Ver más</a>
@@ -218,7 +227,7 @@
                             <span>{{ lab.nombreproducto }}</span>
                         </li>
                     {% empty %}
-                        <li class="small text-muted italic">No hay datos recientes.</li>
+                        <li class="small text-muted">No hay datos.</li>
                     {% endfor %}
                 </ul>
                 <a href="{% url 'productos_laborales' %}" class="btn btn-sm btn-outline-primary mt-2">Ver más</a>
@@ -235,7 +244,7 @@
                     {% for item in resumen_garage %}
                         <span class="badge bg-light text-dark border">{{ item.nombreproducto }}</span>
                     {% empty %}
-                        <span class="small text-muted italic">Sin artículos.</span>
+                        <span class="small text-muted">Sin artículos.</span>
                     {% endfor %}
                 </div>
                 <br>
