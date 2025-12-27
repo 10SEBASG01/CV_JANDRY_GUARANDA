@@ -1,5 +1,5 @@
 import os
-import dj_database_url # Necesario para la base de datos de Render
+import dj_database_url
 from pathlib import Path
 
 # Directorio Base
@@ -10,7 +10,6 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-ww9j7_=ac%06&-rvo27ci
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 # Render Hostnames
-# Cambia esto temporalmente para descartar errores de host
 ALLOWED_HOSTS = ['*']
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
@@ -23,16 +22,17 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'whitenoise.runserver_nostatic', # Manejo de CSS en producción
+    'whitenoise.runserver_nostatic', 
     'django.contrib.staticfiles',
-    'storages', # Librería para Azure
+    'cloudinary_storage', # Librería de Cloudinary
+    'cloudinary',          # Librería de Cloudinary
     'Perfil',
 ]
 
 # Middlewares
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # Debe ir después de security
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -61,7 +61,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ProyectoHojaDeVida.wsgi.application'
 
-# BASE DE DATOS: Usa Postgres si existe DATABASE_URL, si no SQLite local
+# BASE DE DATOS
 DATABASES = {
     'default': dj_database_url.config(
         default='sqlite:///db.sqlite3',
@@ -76,31 +76,31 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# CONFIGURACIÓN DE ALMACENAMIENTO (Azure para Media, Whitenoise para Static)
-AZURE_STORAGE_CONNECTION_STRING = os.environ.get('AZURE_STORAGE_CONNECTION_STRING')
+# CONFIGURACIÓN DE ALMACENAMIENTO (Cloudinary para Media, Whitenoise para Static)
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('dtec003kq'),
+    'API_KEY': os.environ.get('183879747524985'),
+    'API_SECRET': os.environ.get('p_rDwIgxZLMDphK9eEp__Z7kJbk'),
+}
 
-if AZURE_STORAGE_CONNECTION_STRING:
-    AZURE_CONTAINER = 'media'
-    STORAGES = {
-        "default": {
-            "BACKEND": "storages.backends.azure_storage.AzureStorage",
-        },
-        "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-        },
-    }
+# Si están configuradas las credenciales de Cloudinary, las usamos
+if all([CLOUDINARY_STORAGE['CLOUD_NAME'], CLOUDINARY_STORAGE['API_KEY'], CLOUDINARY_STORAGE['API_SECRET']]):
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    MEDIA_URL = '/media/' # Cloudinary maneja esto automáticamente
 else:
-    # Si no hay Azure configurado, guardamos localmente
+    # Local si no hay variables configuradas
     MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'
-    STORAGES = {
-        "default": {
-            "BACKEND": "django.core.files.storage.FileSystemStorage",
-        },
-        "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-        },
-    }
+
+# Whitenoise siempre para Static
+STORAGES = {
+    "default": {
+        "BACKEND": DEFAULT_FILE_STORAGE if 'DEFAULT_FILE_STORAGE' in locals() else "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # Idioma y Hora
 LANGUAGE_CODE = 'es-ec'
@@ -110,8 +110,5 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Permite cargar PDFs en iframes (Vital para tu visor)
+# Permite cargar PDFs en iframes
 X_FRAME_OPTIONS = 'SAMEORIGIN'
-
-# Esto evita el error si la variable no está en Render
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-valor-por-defecto-para-que-no-de-error-500')
